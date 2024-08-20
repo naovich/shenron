@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, ChangeEvent } from "react";
-import { useAddProject, useAppManagement } from "./hooks";
+import { useProjet } from "@/features/project/useProjet";
+import { useApp } from "@/features/app/useApp";
 import { AppProps, ProjetProps, DeviceProps } from "@/lib/types";
 import {
   Card,
@@ -18,37 +19,65 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-const ProjectAppManagement = () => {
-  const { newProjet, handleInputChange, handleAddProjet } = useAddProject();
-  const {
-    projects,
-    selectedProjectTitle,
-    setSelectedProjectTitle,
-    newApp,
-    handleAppInputChange,
-    handleAddApp,
-    handleUpdateApp,
-    handleDeleteApp,
-    handleDeleteProject,
-  } = useAppManagement();
+const ProjectManager = () => {
+  const { projets, addProjet, updateProjet, deleteProjet } = useProjet();
+  const { getAppsForProject, addApp, updateApp, deleteApp } = useApp();
 
+  const [newProjet, setNewProjet] = useState<Partial<ProjetProps>>({
+    title: "",
+    description: "",
+  });
+  const [selectedProjectTitle, setSelectedProjectTitle] = useState<string>("");
+  const [newApp, setNewApp] = useState<Partial<AppProps>>({
+    title: "",
+    description: "",
+    device: "web",
+  });
   const [selectedApp, setSelectedApp] = useState<AppProps | null>(null);
 
-  const handleAppChange = (value: string, field: keyof AppProps) => {
-    if (field === "device") {
-      handleAppInputChange(field, value as DeviceProps);
-    } else {
-      handleAppInputChange(field, value);
+  const handleProjetInputChange = (name: keyof ProjetProps, value: string) => {
+    setNewProjet((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddProjet = () => {
+    if (newProjet.title && newProjet.description) {
+      addProjet({
+        ...newProjet,
+        dateOfCreation: Date.now(),
+        lastUpdate: Date.now(),
+        image: "",
+        tags: [],
+      } as ProjetProps);
+      setNewProjet({ title: "", description: "" });
     }
   };
 
-  const handleSelectedAppChange = (value: string, field: keyof AppProps) => {
-    if (selectedApp) {
-      if (field === "device") {
-        setSelectedApp({ ...selectedApp, [field]: value as DeviceProps });
-      } else {
-        setSelectedApp({ ...selectedApp, [field]: value });
-      }
+  const handleAppInputChange = (name: keyof AppProps, value: string) => {
+    setNewApp((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddApp = () => {
+    if (selectedProjectTitle && newApp.title && newApp.description) {
+      addApp(selectedProjectTitle, {
+        ...newApp,
+        dateOfCreation: Date.now(),
+        lastUpdate: Date.now(),
+        mainApp: false,
+        image: "",
+        tags: [],
+        pages: [],
+      } as AppProps);
+      setNewApp({ title: "", description: "", device: "web" });
+    }
+  };
+
+  const handleUpdateApp = () => {
+    if (selectedProjectTitle && selectedApp) {
+      updateApp(selectedProjectTitle, {
+        ...selectedApp,
+        lastUpdate: Date.now(),
+      });
+      setSelectedApp(null);
     }
   };
 
@@ -69,7 +98,7 @@ const ProjectAppManagement = () => {
               <SelectValue placeholder="Sélectionner un projet" />
             </SelectTrigger>
             <SelectContent>
-              {projects.map((project) => (
+              {projets.map((project) => (
                 <SelectItem key={project.title} value={project.title}>
                   {project.title}
                 </SelectItem>
@@ -80,7 +109,7 @@ const ProjectAppManagement = () => {
             className="mb-4"
             value={newProjet.title}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              handleInputChange("title", e.target.value)
+              handleProjetInputChange("title", e.target.value)
             }
             placeholder="Titre du nouveau projet"
           />
@@ -88,7 +117,7 @@ const ProjectAppManagement = () => {
             className="mb-4"
             value={newProjet.description}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              handleInputChange("description", e.target.value)
+              handleProjetInputChange("description", e.target.value)
             }
             placeholder="Description du nouveau projet"
           />
@@ -99,7 +128,7 @@ const ProjectAppManagement = () => {
           </Button>
           {selectedProjectTitle && (
             <Button
-              onClick={() => handleDeleteProject(selectedProjectTitle)}
+              onClick={() => deleteProjet(selectedProjectTitle)}
               variant="destructive"
             >
               Supprimer Projet
@@ -119,7 +148,7 @@ const ProjectAppManagement = () => {
                 className="mb-4"
                 value={newApp.title || ""}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleAppChange(e.target.value, "title")
+                  handleAppInputChange("title", e.target.value)
                 }
                 placeholder="Titre de l'app"
               />
@@ -127,13 +156,15 @@ const ProjectAppManagement = () => {
                 className="mb-4"
                 value={newApp.description || ""}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleAppChange(e.target.value, "description")
+                  handleAppInputChange("description", e.target.value)
                 }
                 placeholder="Description de l'app"
               />
               <Select
                 value={newApp.device || "web"}
-                onValueChange={(value) => handleAppChange(value, "device")}
+                onValueChange={(value) =>
+                  handleAppInputChange("device", value as DeviceProps)
+                }
               >
                 <SelectTrigger className="mb-4">
                   <SelectValue placeholder="Sélectionnez un appareil" />
@@ -159,35 +190,31 @@ const ProjectAppManagement = () => {
           <h2 className="text-2xl font-semibold">Liste des Projets et Apps</h2>
         </CardHeader>
         <CardContent>
-          {projects.map((project) => (
+          {projets.map((project) => (
             <div key={project.title} className="mb-6">
               <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
               <p className="mb-2">{project.description}</p>
               <h4 className="text-lg font-semibold mb-2">Apps:</h4>
-              {project.apps.map((app) => (
+              {getAppsForProject(project.title).map((app) => (
                 <div key={app.title} className="ml-4 mb-2">
                   <h5 className="text-md font-semibold">{app.title}</h5>
                   <p>{app.description}</p>
-                  {selectedProjectTitle === project.title && (
-                    <>
-                      <Button
-                        onClick={() => setSelectedApp(app)}
-                        className="mr-2 mt-2"
-                        variant="outline"
-                      >
-                        Modifier
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          handleDeleteApp(project.title, app.title)
-                        }
-                        className="mt-2"
-                        variant="destructive"
-                      >
-                        Supprimer
-                      </Button>
-                    </>
-                  )}
+                  <p>Device: {app.device}</p>
+                  <p>Id: {app.id}</p>
+                  <Button
+                    onClick={() => setSelectedApp(app)}
+                    className="mr-2 mt-2"
+                    variant="outline"
+                  >
+                    Modifier
+                  </Button>
+                  <Button
+                    onClick={() => deleteApp(project.title, app.title)}
+                    className="mt-2"
+                    variant="destructive"
+                  >
+                    Supprimer
+                  </Button>
                 </div>
               ))}
             </div>
@@ -206,7 +233,7 @@ const ProjectAppManagement = () => {
                 className="mb-4"
                 value={selectedApp.title || ""}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleSelectedAppChange(e.target.value, "title")
+                  setSelectedApp({ ...selectedApp, title: e.target.value })
                 }
                 placeholder="Titre de l'app"
               />
@@ -214,14 +241,20 @@ const ProjectAppManagement = () => {
                 className="mb-4"
                 value={selectedApp.description || ""}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleSelectedAppChange(e.target.value, "description")
+                  setSelectedApp({
+                    ...selectedApp,
+                    description: e.target.value,
+                  })
                 }
                 placeholder="Description de l'app"
               />
               <Select
                 value={selectedApp.device || "web"}
                 onValueChange={(value) =>
-                  handleSelectedAppChange(value, "device")
+                  setSelectedApp({
+                    ...selectedApp,
+                    device: value as DeviceProps,
+                  })
                 }
               >
                 <SelectTrigger className="mb-4">
@@ -235,15 +268,7 @@ const ProjectAppManagement = () => {
               </Select>
             </CardContent>
             <CardFooter>
-              <Button
-                onClick={() => {
-                  if (selectedApp) {
-                    handleUpdateApp(selectedProjectTitle, selectedApp);
-                    setSelectedApp(null);
-                  }
-                }}
-                className="mr-2"
-              >
+              <Button onClick={handleUpdateApp} className="mr-2">
                 Enregistrer
               </Button>
               <Button onClick={() => setSelectedApp(null)} variant="secondary">
@@ -257,4 +282,4 @@ const ProjectAppManagement = () => {
   );
 };
 
-export default ProjectAppManagement;
+export default ProjectManager;

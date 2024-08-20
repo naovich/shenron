@@ -842,6 +842,7 @@ export type DesignAspectsProps =
   | "other";
 
 export interface PageProps extends BoxProps {
+  id: string;
   type: "page";
   index: boolean;
   head: {
@@ -1048,6 +1049,7 @@ export type PageRoleProps =
   | "other";
 
 export interface AppProps {
+  id: string;
   title: string;
   description: string;
   mainApp: boolean;
@@ -1063,6 +1065,7 @@ export interface AppProps {
 }
 
 export interface ProjetProps {
+  id: string;
   title: string;
   description: string;
   dateOfCreation: number;

@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useProjetState } from "../Context/ProjetContext";
+import { useProjet } from "@/features/project/useProjet";
+import { useApp } from "@/features/app/useApp";
 import {
   Card,
   CardContent,
@@ -11,15 +12,16 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Search } from "lucide-react";
+import { Calendar, Clock, Search, Edit, Trash, Smartphone } from "lucide-react";
 
 const ProjetList = () => {
-  const { state } = useProjetState();
+  const { projets, deleteProjet } = useProjet();
+  const { getAppsForProject, deleteApp } = useApp();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 3; // Réduit à 3 pour une meilleure apparence en colonne unique
+  const projectsPerPage = 3;
 
-  const filteredProjects = state.projets.filter((projet) =>
+  const filteredProjects = projets.filter((projet) =>
     projet.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -60,7 +62,7 @@ const ProjetList = () => {
       {currentProjects.map((projet) => (
         <Card
           key={projet.title}
-          className="mb-4 hover:shadow-lg transition-shadow duration-300"
+          className="mb-8 hover:shadow-lg transition-shadow duration-300"
         >
           <CardHeader>
             <CardTitle>{projet.title}</CardTitle>
@@ -73,13 +75,41 @@ const ProjetList = () => {
                 Créé le : {new Date(projet.dateOfCreation).toLocaleDateString()}
               </span>
             </div>
-            <div className="flex items-center text-sm text-gray-500">
+            <div className="flex items-center text-sm text-gray-500 mb-4">
               <Clock className="mr-2" size={16} />
               <span>
                 Mis à jour le :{" "}
                 {new Date(projet.lastUpdate).toLocaleDateString()}
               </span>
             </div>
+
+            <div className="flex items-center text-sm text-gray-500 mb-4">
+              id :<span>{projet.id}</span>
+            </div>
+
+            <h3 className="text-lg font-semibold mb-2">Apps du projet:</h3>
+            {getAppsForProject(projet.title).map((app) => (
+              <Card key={app.title} className="mb-2 p-3">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="font-medium">{app.title}</h4>
+                    <p className="text-sm text-gray-500">{app.description}</p>
+                  </div>
+                  <div className="flex items-center">
+                    <Smartphone className="mr-2" size={16} />
+                    <span className="text-sm">{app.device}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="ml-2"
+                      onClick={() => deleteApp(projet.title, app.title)}
+                    >
+                      <Trash size={16} />
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
           </CardContent>
         </Card>
       ))}

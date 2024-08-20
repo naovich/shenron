@@ -1,7 +1,7 @@
 import React from "react";
-import ProjectList from "./ProjectList";
-import AddProjet from "./AddProject";
 import Link from "next/link";
+import ProjectList from "./ProjectList";
+import ProjectManager from "./ProjectManager";
 
 function Projets() {
   return (
@@ -11,7 +11,7 @@ function Projets() {
         <Link href="/">home</Link>
       </div>
       <ProjectList />
-      <AddProjet />
+      <ProjectManager />
     </div>
   );
 }
