@@ -42,7 +42,7 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
           ...state.apps,
           [action.payload.projectId]: state.apps[
             action.payload.projectId
-          ].filter((app) => app.title !== action.payload.appId),
+          ].filter((app) => app.id !== action.payload.appId),
         },
       };
     default:

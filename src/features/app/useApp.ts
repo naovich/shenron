@@ -18,9 +18,12 @@ export const useApp = () => {
     getAppsForProject: (projectId: string) => state.apps[projectId] || [],
     addApp: (projectId: string, app: AppProps) => {
       const projet = getProjetById(projectId);
+      console.log(projet);
       if (projet) {
+        console.log("projectId");
         dispatch(addApp(projectId, app));
       } else {
+        console.log(projectId);
         console.error("Cannot add app: Project not found");
       }
     },

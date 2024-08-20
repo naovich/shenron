@@ -4,13 +4,24 @@ export const addApp = (projectId: string, app: AppProps) => ({
   type: "ADD_APP" as const,
   payload: {
     projectId,
-    app: { ...app, id: `app-${projectId}-${Date.now().toString()}` },
+    app: {
+      ...app,
+      id: `app-${projectId}-${Date.now().toString()}`,
+      dateOfCreation: Date.now(),
+      lastUpdate: Date.now(),
+    },
   },
 });
 
 export const updateApp = (projectId: string, app: AppProps) => ({
   type: "UPDATE_APP" as const,
-  payload: { projectId, app },
+  payload: {
+    projectId,
+    app: {
+      ...app,
+      lastUpdate: Date.now(),
+    },
+  },
 });
 
 export const deleteApp = (projectId: string, appId: string) => ({

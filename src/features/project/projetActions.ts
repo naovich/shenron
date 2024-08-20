@@ -2,7 +2,12 @@ import { ProjetProps } from "@/lib/types";
 
 export const addProjet = (projet: ProjetProps) => ({
   type: "ADD_PROJET" as const,
-  payload: { ...projet, id: `project-${Date.now().toString()}` },
+  payload: {
+    ...projet,
+    dateOfCreation: Date.now(),
+    lastUpdate: Date.now(),
+    id: `project-${Date.now().toString()}`,
+  },
 });
 
 export const updateProjet = (projet: ProjetProps) => ({

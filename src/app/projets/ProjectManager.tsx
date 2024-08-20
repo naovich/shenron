@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 
 const ProjectManager = () => {
-  const { projets, addProjet, updateProjet, deleteProjet } = useProjet();
+  const { projets, addProjet, deleteProjet } = useProjet();
   const { getAppsForProject, addApp, updateApp, deleteApp } = useApp();
 
   const [newProjet, setNewProjet] = useState<Partial<ProjetProps>>({
@@ -28,6 +28,7 @@ const ProjectManager = () => {
     description: "",
   });
   const [selectedProjectTitle, setSelectedProjectTitle] = useState<string>("");
+
   const [newApp, setNewApp] = useState<Partial<AppProps>>({
     title: "",
     description: "",
@@ -43,8 +44,6 @@ const ProjectManager = () => {
     if (newProjet.title && newProjet.description) {
       addProjet({
         ...newProjet,
-        dateOfCreation: Date.now(),
-        lastUpdate: Date.now(),
         image: "",
         tags: [],
       } as ProjetProps);
@@ -60,8 +59,6 @@ const ProjectManager = () => {
     if (selectedProjectTitle && newApp.title && newApp.description) {
       addApp(selectedProjectTitle, {
         ...newApp,
-        dateOfCreation: Date.now(),
-        lastUpdate: Date.now(),
         mainApp: false,
         image: "",
         tags: [],
@@ -75,7 +72,6 @@ const ProjectManager = () => {
     if (selectedProjectTitle && selectedApp) {
       updateApp(selectedProjectTitle, {
         ...selectedApp,
-        lastUpdate: Date.now(),
       });
       setSelectedApp(null);
     }
@@ -99,7 +95,7 @@ const ProjectManager = () => {
             </SelectTrigger>
             <SelectContent>
               {projets.map((project) => (
-                <SelectItem key={project.title} value={project.title}>
+                <SelectItem key={project.id} value={project.id}>
                   {project.title}
                 </SelectItem>
               ))}
@@ -191,16 +187,27 @@ const ProjectManager = () => {
         </CardHeader>
         <CardContent>
           {projets.map((project) => (
-            <div key={project.title} className="mb-6">
+            <div key={project.id} className="mb-6">
               <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
               <p className="mb-2">{project.description}</p>
               <h4 className="text-lg font-semibold mb-2">Apps:</h4>
-              {getAppsForProject(project.title).map((app) => (
-                <div key={app.title} className="ml-4 mb-2">
+              {getAppsForProject(project.id).map((app) => (
+                <div key={app.id} className="ml-4 mb-2">
                   <h5 className="text-md font-semibold">{app.title}</h5>
                   <p>{app.description}</p>
                   <p>Device: {app.device}</p>
                   <p>Id: {app.id}</p>
+                  <p>
+                    Créé le :{" "}
+                    {new Date(app.dateOfCreation).toLocaleDateString()}
+                  </p>
+                  <p>
+                    {" "}
+                    Mis à jour le :{" "}
+                    {new Date(app.lastUpdate).toLocaleDateString()} {"à "}{" "}
+                    {new Date(app.lastUpdate).toLocaleTimeString()}
+                  </p>
+
                   <Button
                     onClick={() => setSelectedApp(app)}
                     className="mr-2 mt-2"
@@ -209,7 +216,7 @@ const ProjectManager = () => {
                     Modifier
                   </Button>
                   <Button
-                    onClick={() => deleteApp(project.title, app.title)}
+                    onClick={() => deleteApp(project.id, app.id)}
                     className="mt-2"
                     variant="destructive"
                   >

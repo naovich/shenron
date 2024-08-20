@@ -61,7 +61,7 @@ const ProjetList = () => {
 
       {currentProjects.map((projet) => (
         <Card
-          key={projet.title}
+          key={projet.id}
           className="mb-8 hover:shadow-lg transition-shadow duration-300"
         >
           <CardHeader>
@@ -88,8 +88,8 @@ const ProjetList = () => {
             </div>
 
             <h3 className="text-lg font-semibold mb-2">Apps du projet:</h3>
-            {getAppsForProject(projet.title).map((app) => (
-              <Card key={app.title} className="mb-2 p-3">
+            {getAppsForProject(projet.id).map((app) => (
+              <Card key={app.id} className="mb-2 p-3">
                 <div className="flex justify-between items-center">
                   <div>
                     <h4 className="font-medium">{app.title}</h4>
@@ -102,7 +102,7 @@ const ProjetList = () => {
                       variant="ghost"
                       size="sm"
                       className="ml-2"
-                      onClick={() => deleteApp(projet.title, app.title)}
+                      onClick={() => deleteApp(projet.id, app.id)}
                     >
                       <Trash size={16} />
                     </Button>

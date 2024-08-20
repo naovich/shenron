@@ -25,9 +25,7 @@ export const projetReducer = (
     case "DELETE_PROJET":
       return {
         ...state,
-        projets: state.projets.filter(
-          (projet) => projet.title !== action.payload
-        ),
+        projets: state.projets.filter((projet) => projet.id !== action.payload),
       };
     default:
       return state;

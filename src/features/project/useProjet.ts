@@ -18,6 +18,7 @@ export const useProjet = () => {
     updateProjet: (projet: ProjetProps) => dispatch(updateProjet(projet)),
     deleteProjet: (projetId: string) => dispatch(deleteProjet(projetId)),
     getProjetById: (projetId: string) =>
-      state.projets.find((p) => p.title === projetId),
+      state.projets.find((p) => p.id === projetId),
+    console: () => console.log(state),
   };
 };
