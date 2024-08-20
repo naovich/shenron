@@ -20,7 +20,13 @@ export const deleteProjet = (projetId: string) => ({
   payload: projetId,
 });
 
+export const selectProjet = (projetId: string) => ({
+  type: "SELECT_PROJET" as const,
+  payload: projetId,
+});
+
 export type ProjetAction =
   | ReturnType<typeof addProjet>
   | ReturnType<typeof updateProjet>
-  | ReturnType<typeof deleteProjet>;
+  | ReturnType<typeof deleteProjet>
+  | ReturnType<typeof selectProjet>;

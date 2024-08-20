@@ -3,6 +3,7 @@ import { ProjetState } from "./ProjetContext";
 
 export const initialProjetState: ProjetState = {
   projets: [],
+  selectedProjet: null,
 };
 
 export const projetReducer = (
@@ -14,6 +15,7 @@ export const projetReducer = (
       return {
         ...state,
         projets: [...state.projets, action.payload],
+        selectedProjet: action.payload,
       };
     case "UPDATE_PROJET":
       return {
@@ -26,6 +28,13 @@ export const projetReducer = (
       return {
         ...state,
         projets: state.projets.filter((projet) => projet.id !== action.payload),
+      };
+
+    case "SELECT_PROJET":
+      return {
+        ...state,
+        selectedProjet:
+          state.projets.find((projet) => projet.id === action.payload) || null,
       };
     default:
       return state;

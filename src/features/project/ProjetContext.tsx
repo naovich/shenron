@@ -7,6 +7,7 @@ import { ProjetProps } from "@/lib/types";
 
 export type ProjetState = {
   projets: ProjetProps[];
+  selectedProjet: ProjetProps | null;
 };
 
 type ProjetContextType = {

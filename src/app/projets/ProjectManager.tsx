@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { useProjet } from "@/features/project/useProjet";
 import { useApp } from "@/features/app/useApp";
 import { AppProps, ProjetProps, DeviceProps } from "@/lib/types";
@@ -20,14 +20,25 @@ import {
 } from "@/components/ui/select";
 
 const ProjectManager = () => {
-  const { projets, addProjet, deleteProjet } = useProjet();
+  const { projets, addProjet, deleteProjet, getSelectedProjet, selectProjet } =
+    useProjet();
   const { getAppsForProject, addApp, updateApp, deleteApp } = useApp();
 
   const [newProjet, setNewProjet] = useState<Partial<ProjetProps>>({
     title: "",
     description: "",
   });
-  const [selectedProjectTitle, setSelectedProjectTitle] = useState<string>("");
+
+  const selectedProjet = getSelectedProjet();
+  const currentProjectId = selectedProjet ? selectedProjet.id : "";
+  const [selectedProjectId, setSelectedProjectId] =
+    useState<string>(currentProjectId);
+
+  useEffect(() => {
+    if (selectedProjet) {
+      setSelectedProjectId(selectedProjet.id);
+    }
+  }, [selectedProjet]);
 
   const [newApp, setNewApp] = useState<Partial<AppProps>>({
     title: "",
@@ -51,13 +62,18 @@ const ProjectManager = () => {
     }
   };
 
+  const handleProjectChange = (projectId: string) => {
+    setSelectedProjectId(projectId);
+    selectProjet(projectId);
+  };
+
   const handleAppInputChange = (name: keyof AppProps, value: string) => {
     setNewApp((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAddApp = () => {
-    if (selectedProjectTitle && newApp.title && newApp.description) {
-      addApp(selectedProjectTitle, {
+    if (selectedProjectId && newApp.title && newApp.description) {
+      addApp(selectedProjectId, {
         ...newApp,
         mainApp: false,
         image: "",
@@ -69,8 +85,8 @@ const ProjectManager = () => {
   };
 
   const handleUpdateApp = () => {
-    if (selectedProjectTitle && selectedApp) {
-      updateApp(selectedProjectTitle, {
+    if (selectedProjectId && selectedApp) {
+      updateApp(selectedProjectId, {
         ...selectedApp,
       });
       setSelectedApp(null);
@@ -80,16 +96,16 @@ const ProjectManager = () => {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Gestion des Projets et Apps</h1>
+      <h1 className="text-3xl font-bold mb-6">
+        SelectedProjet: {selectedProjet?.title}
+      </h1>
 
       <Card className="mb-8">
         <CardHeader>
           <h2 className="text-2xl font-semibold">Gestion des projets</h2>
         </CardHeader>
         <CardContent>
-          <Select
-            value={selectedProjectTitle}
-            onValueChange={setSelectedProjectTitle}
-          >
+          <Select value={selectedProjectId} onValueChange={handleProjectChange}>
             <SelectTrigger className="mb-4">
               <SelectValue placeholder="Sélectionner un projet" />
             </SelectTrigger>
@@ -122,9 +138,9 @@ const ProjectManager = () => {
           <Button onClick={handleAddProjet} className="mr-2">
             Ajouter Projet
           </Button>
-          {selectedProjectTitle && (
+          {selectedProjectId && (
             <Button
-              onClick={() => deleteProjet(selectedProjectTitle)}
+              onClick={() => deleteProjet(selectedProjectId)}
               variant="destructive"
             >
               Supprimer Projet
@@ -138,7 +154,7 @@ const ProjectManager = () => {
           <h2 className="text-2xl font-semibold">Gérer les Apps</h2>
         </CardHeader>
         <CardContent>
-          {selectedProjectTitle && (
+          {selectedProjectId && (
             <>
               <Input
                 className="mb-4"
@@ -175,7 +191,7 @@ const ProjectManager = () => {
           )}
         </CardContent>
         <CardFooter>
-          <Button onClick={handleAddApp} disabled={!selectedProjectTitle}>
+          <Button onClick={handleAddApp} disabled={!selectedProjectId}>
             Ajouter App
           </Button>
         </CardFooter>

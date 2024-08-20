@@ -3,19 +3,13 @@
 import React, { useState } from "react";
 import { useProjet } from "@/features/project/useProjet";
 import { useApp } from "@/features/app/useApp";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Search, Edit, Trash, Smartphone } from "lucide-react";
 
 const ProjetList = () => {
-  const { projets, deleteProjet } = useProjet();
+  const { projets, getSelectedProjet } = useProjet();
   const { getAppsForProject, deleteApp } = useApp();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,6 +27,7 @@ const ProjetList = () => {
   );
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const selecteProjet = getSelectedProjet();
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -56,6 +51,7 @@ const ProjetList = () => {
               size={20}
             />
           </div>
+          <div>Selected project: {selecteProjet?.title}</div>
         </CardContent>
       </Card>
 
