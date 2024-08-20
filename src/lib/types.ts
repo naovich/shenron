@@ -882,12 +882,12 @@ export type BlockModuleProps =
   | "steps"
   | "subscribe"
   | "team"
-  | "testimonials"
   | "video"
   | "search"
   | "timeline";
 
 export type BlockTypeProps =
+  | "blank"
   | "banner"
   | "features"
   | "footer"
@@ -896,7 +896,7 @@ export type BlockTypeProps =
   | "services"
   | "social-media"
   | "sponsors"
-  | "blank"
+  | "testimonials"
   | BlockModuleProps;
 
 export type ModuleProps =

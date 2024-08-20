@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import SelectCustom from "@/components/ui/selectCustom";
 import { Check } from "lucide-react";
+import Link from "next/link";
 import { use, useState } from "react";
 
 export default function Home() {
@@ -19,6 +20,10 @@ export default function Home() {
 
   return (
     <div className="space-y-4 ">
+      <Link href="/projets" className="text-blue-500">
+        {" "}
+        Projets
+      </Link>
       <Button onClick={() => setClassName("bg-red-500")}>Button</Button>
       <Input type="email" placeholder="Email" className={className} />
       <Checkbox />
