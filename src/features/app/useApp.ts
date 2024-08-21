@@ -1,8 +1,16 @@
 import { useContext } from "react";
 import { AppContext } from "./AppContext";
-import { addApp, updateApp, deleteApp } from "./appActions";
+import {
+  addApp,
+  updateApp,
+  deleteApp,
+  addPageToApp,
+  updatePageInApp,
+  deletePageFromApp,
+  selectApp,
+} from "./appActions";
 import { useProjet } from "../project/useProjet";
-import { AppProps } from "@/lib/types";
+import { AppProps, PageProps } from "@/lib/types";
 
 export const useApp = () => {
   const context = useContext(AppContext);
@@ -21,7 +29,6 @@ export const useApp = () => {
       if (projet) {
         dispatch(addApp(projectId, app));
       } else {
-        console.log(projectId);
         console.error("Cannot add app: Project not found");
       }
     },
@@ -41,5 +48,40 @@ export const useApp = () => {
     },
     getAppById: (projectId: string, appId: string) =>
       state.apps[projectId]?.find((app: AppProps) => app.id === appId),
+    addPage: (projectId: string, appId: string, page: PageProps) => {
+      if (state.apps[projectId]) {
+        dispatch(addPageToApp(projectId, appId, page));
+      } else {
+        console.error("Cannot add page: Project or app not found");
+      }
+    },
+    updatePage: (projectId: string, appId: string, page: PageProps) => {
+      if (state.apps[projectId]) {
+        dispatch(updatePageInApp(projectId, appId, page));
+      } else {
+        console.error("Cannot update page: Project or app not found");
+      }
+    },
+    deletePage: (projectId: string, appId: string, pageId: string) => {
+      if (state.apps[projectId]) {
+        dispatch(deletePageFromApp(projectId, appId, pageId));
+      } else {
+        console.error("Cannot delete page: Project or app not found");
+      }
+    },
+    getPagesForApp: (projectId: string, appId: string) =>
+      state.apps[projectId]?.find((app: AppProps) => app.id === appId)?.pages ||
+      [],
+
+    selectApp: (projectId: string, appId: string) => {
+      dispatch(selectApp(projectId, appId));
+    },
+    getSelectedApp: () => {
+      if (state.selectedApp) {
+        const { projectId, appId } = state.selectedApp;
+        return state.apps[projectId]?.find((app) => app.id === appId) || null;
+      }
+      return null;
+    },
   };
 };

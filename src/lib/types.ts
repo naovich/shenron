@@ -843,6 +843,7 @@ export type DesignAspectsProps =
 
 export interface PageProps extends BoxProps {
   id: string;
+  title: string;
   type: "page";
   index: boolean;
   head: {

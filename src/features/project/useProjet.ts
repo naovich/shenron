@@ -23,7 +23,6 @@ export const useProjet = () => {
     updateProjet: (projet: ProjetProps) => dispatch(updateProjet(projet)),
     deleteProjet: (projetId: string) => dispatch(deleteProjet(projetId)),
     selectProjet: (projetId: string) => dispatch(selectProjet(projetId)),
-
     getSelectedProjet: () => state.selectedProjet,
     getProjetById: (projetId: string) =>
       state.projets.find((p) => p.id === projetId),
