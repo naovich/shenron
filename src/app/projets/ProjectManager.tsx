@@ -26,8 +26,14 @@ import {
 } from "@/components/ui/select";
 
 const ProjectManager = () => {
-  const { projets, addProjet, deleteProjet, getSelectedProjet, selectProjet } =
-    useProjet();
+  const {
+    projets,
+    addProjet,
+    updateProjet,
+    deleteProjet,
+    getSelectedProjet,
+    selectProjet,
+  } = useProjet();
   const {
     getAppsForProject,
     addApp,
@@ -67,8 +73,24 @@ const ProjectManager = () => {
   useEffect(() => {
     if (selectedProjet) {
       setSelectedProjectId(selectedProjet.id);
+      setNewProjet({
+        title: selectedProjet.title,
+        description: selectedProjet.description,
+      });
     }
   }, [selectedProjet]);
+
+  useEffect(() => {
+    if (selectedApp) {
+      setNewApp({
+        title: selectedApp.title,
+        description: selectedApp.description,
+        device: selectedApp.device,
+      });
+    } else {
+      setNewApp({ title: "", description: "", device: "web" });
+    }
+  }, [selectedApp]);
 
   const handleProjetInputChange = (name: keyof ProjetProps, value: string) => {
     setNewProjet((prev) => ({ ...prev, [name]: value }));
@@ -82,6 +104,16 @@ const ProjectManager = () => {
         tags: [],
       } as ProjetProps);
       setNewProjet({ title: "", description: "" });
+    }
+  };
+
+  const handleUpdateProjet = () => {
+    if (selectedProjet && newProjet.title && newProjet.description) {
+      updateProjet({
+        ...selectedProjet,
+        title: newProjet.title,
+        description: newProjet.description,
+      });
     }
   };
 
@@ -115,14 +147,13 @@ const ProjectManager = () => {
         description: newApp.description || selectedApp.description,
         device: newApp.device || selectedApp.device,
       });
-      setNewApp({ title: "", description: "", device: "web" });
     }
   };
 
   const handleDeleteApp = () => {
     if (selectedProjectId && selectedApp) {
       deleteApp(selectedProjectId, selectedApp.id);
-      selectApp(selectedProjectId, ""); // Désélectionner l'app après suppression
+      selectApp(selectedProjectId, "");
       setNewApp({ title: "", description: "", device: "web" });
     }
   };
@@ -182,7 +213,7 @@ const ProjectManager = () => {
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleProjetInputChange("title", e.target.value)
             }
-            placeholder="Titre du nouveau projet"
+            placeholder="Titre du projet"
           />
           <Input
             className="mb-4"
@@ -190,7 +221,7 @@ const ProjectManager = () => {
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleProjetInputChange("description", e.target.value)
             }
-            placeholder="Description du nouveau projet"
+            placeholder="Description du projet"
           />
         </CardContent>
         <CardFooter>
@@ -198,12 +229,17 @@ const ProjectManager = () => {
             Ajouter Projet
           </Button>
           {selectedProjectId && (
-            <Button
-              onClick={() => deleteProjet(selectedProjectId)}
-              variant="destructive"
-            >
-              Supprimer Projet
-            </Button>
+            <>
+              <Button onClick={handleUpdateProjet} className="mr-2">
+                Mettre à jour Projet
+              </Button>
+              <Button
+                onClick={() => deleteProjet(selectedProjectId)}
+                variant="destructive"
+              >
+                Supprimer Projet
+              </Button>
+            </>
           )}
         </CardFooter>
       </Card>

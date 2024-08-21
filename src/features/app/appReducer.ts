@@ -25,6 +25,10 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
             action.payload.app,
           ],
         },
+        selectedApp: {
+          projectId: action.payload.projectId,
+          appId: action.payload.app.id,
+        },
       };
     case "UPDATE_APP":
       return {
