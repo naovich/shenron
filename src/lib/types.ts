@@ -224,9 +224,6 @@ export interface BackgroundProps {
 export interface StatusProps {
   hover?: {
     background?: BackgroundProps;
-    border?: BorderProps;
-    ring?: RingProps;
-    shadow?: string;
   };
 }
 

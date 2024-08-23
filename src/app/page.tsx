@@ -20,6 +20,10 @@ export default function Home() {
 
   return (
     <div className="space-y-4 ">
+      <Link href="/interface" className="text-blue-500">
+        {" "}
+        Interface
+      </Link>
       <Link href="/projets" className="text-blue-500">
         {" "}
         Projets
