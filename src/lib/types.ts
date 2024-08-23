@@ -53,7 +53,6 @@ export interface TransformProps {
 }
 
 export interface BaliseProps {
-  display?: DisplayProps;
   coord?: CoordProps;
   position?: PositionProps;
   opacity?: number | string;
@@ -365,16 +364,19 @@ export interface BoxProps extends BaliseProps {
     | "block"
     | "inline"
     | "inline-block";
-  position?: PositionProps;
   size?: SizeProps;
   padding?: PaddingProps;
+  margin?: MarginProps;
   background?: BackgroundProps;
   hover?: StatusProps;
   divider?: DividerProps;
   children: React.ReactNode;
   arrangement?: ArrangementProps;
   overflow?: "visible" | "hidden" | "scroll" | "auto";
-  space?: number | string;
+  space?: {
+    width?: number | string;
+    direction?: "x" | "y";
+  };
 }
 
 //-----------------ARRANGEMENT----------------
